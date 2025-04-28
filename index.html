@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dynamic Calculator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
+    <h1 class="text-2xl font-semibold mb-4 text-center">Dynamic Calculator</h1>
+    <div id="display" class="bg-gray-200 rounded-lg p-4 text-right text-3xl font-mono mb-6 min-h-[3rem] select-text break-words"></div>
+    <div class="grid grid-cols-4 gap-4">
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="7">7</button>
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="8">8</button>
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="9">9</button>
+      <button class="bg-blue-500 text-white rounded-lg aspect-square text-xl font-semibold hover:bg-blue-600 transition" data-value="/">&#247;</button>
+
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="4">4</button>
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="5">5</button>
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="6">6</button>
+      <button class="bg-blue-500 text-white rounded-lg aspect-square text-xl font-semibold hover:bg-blue-600 transition" data-value="*">&times;</button>
+
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="1">1</button>
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="2">2</button>
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="3">3</button>
+      <button class="bg-blue-500 text-white rounded-lg aspect-square text-xl font-semibold hover:bg-blue-600 transition" data-value="-">-</button>
+
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value="0">0</button>
+      <button class="bg-gray-300 rounded-lg aspect-square text-xl font-semibold hover:bg-gray-400 transition" data-value=".">.</button>
+      <button id="clear" class="bg-red-500 text-white rounded-lg aspect-square text-xl font-semibold hover:bg-red-600 transition">C</button>
+      <button class="bg-blue-500 text-white rounded-lg aspect-square text-xl font-semibold hover:bg-blue-600 transition" data-value="+">+</button>
+
+      <button id="equals" class="col-span-4 bg-green-600 text-white rounded-lg py-3 text-xl font-semibold hover:bg-green-700 transition">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    let currentInput = '';
+
+    function updateDisplay() {
+      display.textContent = currentInput || '0';
+    }
+
+    function appendValue(value) {
+      // Prevent multiple dots in a number
+      if (value === '.' && currentInput.slice(-1) === '.') return;
+      // Prevent two operators in a row
+      if (['+', '-', '*', '/'].includes(value) && ['+', '-', '*', '/'].includes(currentInput.slice(-1))) {
+        currentInput = currentInput.slice(0, -1);
+      }
+      currentInput += value;
+      updateDisplay();
+    }
+
+    function clearInput() {
+      currentInput = '';
+      updateDisplay();
+    }
+
+    function calculate() {
+      try {
+        // Evaluate the expression safely
+        // eslint-disable-next-line no-eval
+        const result = eval(currentInput);
+        currentInput = result.toString();
+      } catch (e) {
+        currentInput = 'Error';
+      }
+      updateDisplay();
+    }
+
+    document.querySelectorAll('button[data-value]').forEach(button => {
+      button.addEventListener('click', () => {
+        appendValue(button.getAttribute('data-value'));
+      });
+    });
+
+    document.getElementById('clear').addEventListener('click', clearInput);
+    document.getElementById('equals').addEventListener('click', calculate);
+
+    updateDisplay();
+  </script>
+</body>
+</html>
